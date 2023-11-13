@@ -15,6 +15,8 @@ import com.example.documentharbor.controller.AppController;
 import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.interfaces.OnSubFolderClickedListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class FolderExplorerActivity extends AppCompatActivity implements OnSubFolderClickedListener {
 
@@ -33,6 +35,7 @@ public class FolderExplorerActivity extends AppCompatActivity implements OnSubFo
         initializeFolderStructure();
         displaySubFolders();
         setupNavigateUp();
+        setupBottomSheetDialog();
     }
 
     private void setupUIReferences() {
@@ -71,6 +74,26 @@ public class FolderExplorerActivity extends AppCompatActivity implements OnSubFo
                 }
             }
         });
+    }
+
+    private void setupBottomSheetDialog() {
+        FloatingActionButton fab = findViewById(R.id.fabAddOptions);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showBottomSheetDialog();
+            }
+        });
+    }
+
+    private void showBottomSheetDialog() {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog);
+
+        Button addSubFolderButton = bottomSheetDialog.findViewById(R.id.btnAddSubfolder);
+        Button startImageCaptureButton = bottomSheetDialog.findViewById(R.id.btnStartImageCapture);
+
+        bottomSheetDialog.show();
     }
 
 }

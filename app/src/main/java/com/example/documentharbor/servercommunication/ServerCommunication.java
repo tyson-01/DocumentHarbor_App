@@ -17,7 +17,7 @@ public class ServerCommunication {
     public FolderStructure getFolderStructure() {
         //TODO: setup to work with API when server is done
         //currently just mocks up a folder structure
-        String jsonResponse = "{\"name\":\"Root\",\"subfolders\":[{\"name\":\"Documents\",\"subfolders\":[{\"name\":\"Subfolder1\",\"subfolders\":[]}]}]}";
+        String jsonResponse = "{\"name\":\"Root\",\"subFolders\":[{\"name\":\"Documents\",\"subFolders\":[{\"name\":\"Subfolder1\",\"subFolders\":[]}]}]}";
 
         Folder rootFolder = gson.fromJson(jsonResponse, Folder.class);
         explore(rootFolder);
