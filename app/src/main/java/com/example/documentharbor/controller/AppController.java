@@ -47,13 +47,7 @@ public class AppController {
     }
 
     public void createNewSession(String sessionName, String folderPath) {
-        currentPhotoSession = new PhotoSession(sessionName, folderStructure.getRootFolder());
-    }
-
-    public void capturePhoto(File photo) {
-        if (currentPhotoSession != null) {
-            currentPhotoSession.capturePhoto(photo);
-        }
+        currentPhotoSession = new PhotoSession(sessionName, folderPath);
     }
 
     public void endSession() {

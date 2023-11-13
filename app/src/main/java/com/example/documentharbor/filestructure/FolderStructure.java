@@ -1,10 +1,15 @@
 package com.example.documentharbor.filestructure;
 
+import android.util.Pair;
+
 import com.example.documentharbor.controller.AppController;
 import com.example.documentharbor.customexceptions.FolderNotFoundException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Stack;
 
 public class FolderStructure {
     private Folder rootFolder;
@@ -65,6 +70,29 @@ public class FolderStructure {
             Folder parent = findParentOf(folder, child);
             if (parent != null) {
                 return parent;
+            }
+        }
+
+        return null;
+    }
+
+    public String getCurrentFolderPath() {
+        if (rootFolder == null || currentFolder == null) {
+            return null;
+        }
+
+        return getCurrentFolderRecursiveHelper(rootFolder, rootFolder.getName());
+    }
+
+    private String getCurrentFolderRecursiveHelper(Folder folder, String path) {
+        if (folder == currentFolder) {
+            return path;
+        }
+
+        for (Folder child : folder.getSubFolders()) {
+            String childPath = getCurrentFolderRecursiveHelper(child, path + "/" + child.getName());
+            if (childPath != null) {
+                return childPath;
             }
         }
 

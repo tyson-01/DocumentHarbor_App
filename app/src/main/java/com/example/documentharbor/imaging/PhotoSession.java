@@ -10,15 +10,23 @@ import java.util.List;
 
 public class PhotoSession {
     private String sessionName;
-    private Folder currentFolder;
+    private String folderPath;
     private ProcessingMethod processingMethod;
     private List<File> capturedPhotos;
 
-    public PhotoSession(String sessionName, Folder initialFolder) {
+    public PhotoSession(String sessionName, String folderPath) {
         this.sessionName = sessionName;
-        this.currentFolder = initialFolder;
+        this.folderPath = folderPath;
         this.processingMethod = ProcessingMethod.LEAVE_AS_IMAGES; // Default method
         this.capturedPhotos = new ArrayList<>();
+    }
+
+    public String getSessionName() {
+        return sessionName;
+    }
+
+    public String getFolderPath() {
+        return folderPath;
     }
 
     public void setProcessingMethod(ProcessingMethod method) {
@@ -33,16 +41,12 @@ public class PhotoSession {
         capturedPhotos.add(photo);
     }
 
-    public void endSession() {
-        // End the session (no actual processing here)
-    }
-
-    public Folder getSessionFolder() {
-        return currentFolder;
-    }
-
     public List<File> getCapturedPhotos() {
         return new ArrayList<>(capturedPhotos);
+    }
+
+    public void endSession() {
+        // End the session (no actual processing here)
     }
 
 }

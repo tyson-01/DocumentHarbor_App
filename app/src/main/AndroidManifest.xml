@@ -24,6 +24,8 @@
 
         <activity
             android:name=".ui.folderexplorer.FolderExplorerActivity"/>
+        <activity
+            android:name=".ui.PhotoSessionActivity"/>
     </application>
 
 </manifest>
