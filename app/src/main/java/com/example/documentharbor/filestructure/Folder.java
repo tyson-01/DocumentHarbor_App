@@ -1,14 +1,15 @@
 package com.example.documentharbor.filestructure;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Folder {
     private String name;
-    private List<Folder> subfolders;
+    private List<Folder> subFolders;
 
-    public Folder(String name, List<Folder> subfolders) {
+    public Folder(String name, List<Folder> subFolders) {
         this.name = name;
-        this.subfolders = subfolders;
+        this.subFolders = (subFolders != null) ? subFolders : new ArrayList<>();
     }
 
     public String getName() {
@@ -16,11 +17,11 @@ public class Folder {
     }
 
     public List<Folder> getSubFolders() {
-        return subfolders;
+        return subFolders;
     }
 
     public Folder getSubFolderByName(String name) {
-        for (Folder subFolder : subfolders) {
+        for (Folder subFolder : subFolders) {
             if (subFolder.getName().equals(name)) {
                 return subFolder;
             }
@@ -29,6 +30,7 @@ public class Folder {
     }
 
     public void addSubFolder(Folder subfolder) {
-        subfolders.add(subfolder);
+        subFolders.add(subfolder);
     }
+
 }

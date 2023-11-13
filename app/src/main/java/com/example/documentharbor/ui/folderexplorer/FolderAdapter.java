@@ -1,5 +1,6 @@
 package com.example.documentharbor.ui.folderexplorer;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.documentharbor.R;
 import com.example.documentharbor.filestructure.Folder;
+import com.example.documentharbor.interfaces.OnSubFolderClickedListener;
 
 import java.util.List;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderViewHolder> {
 
     private List<Folder> subFolders;
+    private OnSubFolderClickedListener listener;
 
-    public FolderAdapter(List<Folder> subFolders) {
+    public FolderAdapter(List<Folder> subFolders, OnSubFolderClickedListener listener) {
         this.subFolders = subFolders;
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,10 +35,19 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderViewHolder> {
     public void onBindViewHolder(@NonNull FolderViewHolder holder, int position) {
         Folder subfolder = subFolders.get(position);
         holder.bind(subfolder);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onSubFolderClick(position);
+                }
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return subFolders.size();
     }
+
 }

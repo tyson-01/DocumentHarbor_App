@@ -6,4 +6,5 @@ public class Logger {
     public void log(String logData) {
         Log.d("temptag", logData);
     }
+
 }

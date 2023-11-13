@@ -45,4 +45,5 @@ public class InitiateSessionActivity extends AppCompatActivity {
         intent.putExtra("SESSION_NAME", sessionName);
         startActivity(intent);
     }
+
 }

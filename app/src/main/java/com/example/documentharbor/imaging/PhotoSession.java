@@ -44,4 +44,5 @@ public class PhotoSession {
     public List<File> getCapturedPhotos() {
         return new ArrayList<>(capturedPhotos);
     }
+
 }

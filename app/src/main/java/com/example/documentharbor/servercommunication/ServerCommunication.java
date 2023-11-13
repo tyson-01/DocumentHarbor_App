@@ -40,4 +40,5 @@ public class ServerCommunication {
         // Implementation to upload files to the server
         return true; // Placeholder, actual implementation needed
     }
+
 }

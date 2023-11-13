@@ -23,9 +23,13 @@ public class FolderStructure {
         return currentFolder;
     }
 
+    public void setCurrentFolder(Folder folder) {
+        currentFolder = folder;
+    }
     public void setCurrentFolder(String folderPath) {
         String[] folderNames = folderPath.split("/");
         Folder current = rootFolder;
+
         for (String folderName : folderNames) {
             Folder nextFolder = current.getSubFolderByName(folderName);
             if (nextFolder != null) {
@@ -34,6 +38,7 @@ public class FolderStructure {
                 throw new FolderNotFoundException(folderName);
             }
         }
+
         currentFolder = current;
     }
 
@@ -42,4 +47,28 @@ public class FolderStructure {
         currentFolder.addSubFolder(newFolder);
         currentFolder = newFolder;
     }
+
+    public Folder getParentOf(Folder child) {
+        return findParentOf(rootFolder, child);
+    }
+
+    private Folder findParentOf(Folder current, Folder child) {
+        if (current == null || current.getSubFolders().isEmpty()) {
+            return null;
+        }
+
+        for (Folder folder : current.getSubFolders()) {
+            if (folder.equals(child)) {
+                return current;
+            }
+
+            Folder parent = findParentOf(folder, child);
+            if (parent != null) {
+                return parent;
+            }
+        }
+
+        return null;
+    }
+
 }
