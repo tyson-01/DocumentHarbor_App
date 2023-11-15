@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.documentharbor.R;
 import com.example.documentharbor.controller.AppController;
 import com.example.documentharbor.enums.ProcessingMethod;
-import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.interfaces.OnSubFolderClickedListener;
 import com.example.documentharbor.ui.PhotoSessionActivity;
@@ -70,27 +69,19 @@ public class FolderExplorerActivity extends AppCompatActivity implements OnSubFo
     }
 
     private void setupNavigateUp() {
-        btnNavigateUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (folderStructure.getCurrentFolder().equals(folderStructure.getRootFolder())) {
-                    Toast.makeText(v.getContext(), "Already At Root", Toast.LENGTH_SHORT).show();
-                } else {
-                    folderStructure.setCurrentFolder(folderStructure.getParentOf(folderStructure.getCurrentFolder()));
-                    displaySubFolders();
-                }
+        btnNavigateUp.setOnClickListener(v -> {
+            if (folderStructure.getCurrentFolder().equals(folderStructure.getRootFolder())) {
+                Toast.makeText(v.getContext(), "Already At Root", Toast.LENGTH_SHORT).show();
+            } else {
+                folderStructure.setCurrentFolder(folderStructure.getParentOf(folderStructure.getCurrentFolder()));
+                displaySubFolders();
             }
         });
     }
 
     private void setupBottomSheetDialog() {
         FloatingActionButton fab = findViewById(R.id.fabAddOptions);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showBottomSheetDialog();
-            }
-        });
+        fab.setOnClickListener(v -> showBottomSheetDialog());
     }
 
     private void showBottomSheetDialog() {
@@ -100,83 +91,56 @@ public class FolderExplorerActivity extends AppCompatActivity implements OnSubFo
         Button addSubFolderButton = bottomSheetDialog.findViewById(R.id.btnAddSubfolder);
         Button startImageCaptureButton = bottomSheetDialog.findViewById(R.id.btnStartImageCapture);
 
-        addSubFolderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setTitle("Add Folder");
+        addSubFolderButton.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+            builder.setTitle("Add Folder");
 
-                final EditText input = new EditText(v.getContext());
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                builder.setView(input);
+            final EditText input = new EditText(v.getContext());
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
 
-                builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String folderName = input.getText().toString().trim();
-                        if (!folderName.isEmpty()) {
-                            folderStructure.createFolder(folderName);
-                            displaySubFolders();
-                            Toast.makeText(v.getContext(), "Folder Created", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
-                bottomSheetDialog.cancel();
-            }
-        });
-        startImageCaptureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String sessionName = getIntent().getStringExtra("SESSION_NAME");
-                String folderPath = folderStructure.getCurrentFolderPath();
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setTitle("Select Processing Mode");
-
-                ProcessingMethod[] items = ProcessingMethod.values();
-                final int[] selectedItem = {-1};
-
-                String[] itemNames = new String[items.length];
-                for (int i = 0; i < items.length; i++) {
-                    itemNames[i] = items[i].toString();
+            builder.setPositiveButton("Add", (dialog, which) -> {
+                String folderName = input.getText().toString().trim();
+                if (!folderName.isEmpty()) {
+                    folderStructure.createFolder(folderName);
+                    displaySubFolders();
+                    Toast.makeText(v.getContext(), "Folder Created", Toast.LENGTH_SHORT).show();
                 }
+            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
-                builder.setSingleChoiceItems(itemNames, selectedItem[0], new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedItem[0] = which;
-                    }
-                });
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (selectedItem[0] != -1) {
-                            AppController.getInstance().createNewSession(sessionName, folderPath);
-                            AppController.getInstance().setProcessingMethod(items[selectedItem[0]]);
-                            Intent intent = new Intent(v.getContext(), PhotoSessionActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+            builder.show();
+            bottomSheetDialog.cancel();
+        });
+        startImageCaptureButton.setOnClickListener(v -> {
+            String sessionName = getIntent().getStringExtra("SESSION_NAME");
+            String folderPath = folderStructure.getCurrentFolderPath();
 
-                builder.show();
-                bottomSheetDialog.cancel();
+            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+            builder.setTitle("Select Processing Mode");
+
+            ProcessingMethod[] items = ProcessingMethod.values();
+            final int[] selectedItem = {-1};
+
+            String[] itemNames = new String[items.length];
+            for (int i = 0; i < items.length; i++) {
+                itemNames[i] = items[i].toString();
             }
+
+            builder.setSingleChoiceItems(itemNames, selectedItem[0], (dialog, which) -> selectedItem[0] = which);
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                if (selectedItem[0] != -1) {
+                    AppController.getInstance().createNewSession(sessionName, folderPath);
+                    AppController.getInstance().setProcessingMethod(items[selectedItem[0]]);
+                    Intent intent = new Intent(v.getContext(), PhotoSessionActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+            builder.show();
+            bottomSheetDialog.cancel();
         });
 
         bottomSheetDialog.show();

@@ -1,20 +1,14 @@
 package com.example.documentharbor.imaging;
 
 import com.example.documentharbor.enums.ProcessingMethod;
-import com.example.documentharbor.filestructure.Folder;
-import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.servercommunication.ServerCommunication;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 public class PhotoSession {
-    private String sessionName;
+    private final String sessionName;
     private int nextPhotoIndex;
-    private String folderPath;
+    private final String folderPath;
     private ProcessingMethod processingMethod;
-    private ServerCommunication serverCommunication;
+    private final ServerCommunication serverCommunication;
 
     public PhotoSession(String sessionName, String folderPath, ServerCommunication serverCommunication) {
         this.sessionName = sessionName;
@@ -26,6 +20,9 @@ public class PhotoSession {
 
     public String getSessionName() {
         return sessionName;
+    }
+    public int numberOfPhotos() {
+        return nextPhotoIndex - 1;
     }
 
     public String getFolderPath() {
@@ -40,9 +37,9 @@ public class PhotoSession {
         return this.processingMethod;
     }
 
-    public boolean addPhotoToSession(File photo) {
+    public boolean addPhotoToSession(byte[] photoData) {
         String photoName = folderPath + "/" + sessionName + Integer.toString(nextPhotoIndex) + ".jpg";
-        boolean uploadSuccessful = serverCommunication.uploadFile(photoName, photo);
+        boolean uploadSuccessful = serverCommunication.uploadFile(photoName, photoData);
 
         if (uploadSuccessful) {
             nextPhotoIndex++;

@@ -1,13 +1,10 @@
 package com.example.documentharbor.controller;
 
 import com.example.documentharbor.enums.ProcessingMethod;
-import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.imaging.PhotoSession;
 import com.example.documentharbor.logging.Logger;
 import com.example.documentharbor.servercommunication.ServerCommunication;
-
-import java.io.File;
 
 public class AppController {
 
@@ -15,8 +12,8 @@ public class AppController {
 
     private FolderStructure folderStructure;
     private PhotoSession currentPhotoSession;
-    private ServerCommunication serverCommunication;
-    private Logger logger;
+    private final ServerCommunication serverCommunication;
+    private final Logger logger;
 
     private AppController() {
         // Initialize components
@@ -59,12 +56,11 @@ public class AppController {
         }
     }
 
-    public void endSession() {
-        // End the session and perform necessary actions
+    public boolean endSession() {
         if (currentPhotoSession != null) {
-            // Perform actions based on the chosen processing method
-            currentPhotoSession.endSession();
+            return currentPhotoSession.endSession();
         }
+        return false;
     }
 }
 

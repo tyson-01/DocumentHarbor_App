@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Folder {
-    private String name;
-    private List<Folder> subFolders;
+    private final String name;
+    private final List<Folder> subFolders;
 
     public Folder(String name, List<Folder> subFolders) {
         this.name = name;

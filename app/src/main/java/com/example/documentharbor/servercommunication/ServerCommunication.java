@@ -5,10 +5,7 @@ import android.util.Log;
 import com.example.documentharbor.enums.ProcessingMethod;
 import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
-import com.example.documentharbor.imaging.PhotoSession;
 import com.google.gson.Gson;
-
-import java.io.File;
 
 public class ServerCommunication {
     private Gson gson;
@@ -39,12 +36,29 @@ public class ServerCommunication {
         }
     }
 
-    public boolean uploadFile(String photoName, File photo) {
-        //TODO: replace with api stuff
-        // convert to json
-        // make api call
-        // if 200, then return true. Else return false
+    public boolean uploadFile(String photoName, byte[] photoData) {
+        //TODO: uncomment out the logic once api is set up
+        try{Thread.sleep(3000);} catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return true;
+
+        /*
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), photoData);
+        RequestBody fileNameBody = RequestBody.create(MediaType.parse("text/plain"), photoName);
+
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", photoName, requestBody);
+
+        ApiInterface apiInterface = RetrofitClient.getClient().create(ApiInterface.class);
+        Call<ApiResponse> call = apiInterface.uploadFile(fileNameBody, filePart);
+
+        try {
+            Response<ApiResponse> response = call.execute();
+            return response.isSuccessful();
+        } catch (IOException e) {
+            return false;
+        }
+         */
     }
 
     public boolean sendEndSignal(String identifier, ProcessingMethod processingMethod) {

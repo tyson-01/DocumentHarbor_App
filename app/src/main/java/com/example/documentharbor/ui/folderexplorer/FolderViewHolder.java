@@ -11,7 +11,7 @@ import com.example.documentharbor.filestructure.Folder;
 
 public class FolderViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView tvFolderName;
+    private final TextView tvFolderName;
 
     public FolderViewHolder(@NonNull View itemView) {
         super(itemView);

@@ -1,18 +1,11 @@
 package com.example.documentharbor.filestructure;
 
-import android.util.Pair;
-
-import com.example.documentharbor.controller.AppController;
 import com.example.documentharbor.customexceptions.FolderNotFoundException;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Stack;
 
 public class FolderStructure {
-    private Folder rootFolder;
+    private final Folder rootFolder;
     private Folder currentFolder;
 
     public FolderStructure(Folder root) {

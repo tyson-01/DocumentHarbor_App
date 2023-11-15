@@ -1,14 +1,16 @@
 package com.example.documentharbor.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
@@ -16,14 +18,17 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.example.documentharbor.R;
+import com.example.documentharbor.controller.AppController;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 
 public class PhotoSessionActivity extends AppCompatActivity {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private PreviewView previewView;
     private ImageCapture imageCapture;
+    private Button captureButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +40,14 @@ public class PhotoSessionActivity extends AppCompatActivity {
 
         startCamera();
 
-        Button captureButton = findViewById(R.id.btnCapture);
-        captureButton.setOnClickListener(view -> captureImage());
+        captureButton = findViewById(R.id.btnCapture);
+        captureButton.setOnClickListener(view -> {
+            captureButton.setEnabled(false);
+            captureImage();
+        });
+
+        Button doneButton = findViewById(R.id.btnDone);
+        doneButton.setOnClickListener(view -> finishSession());
     }
 
     private void startCamera() {
@@ -45,7 +56,7 @@ public class PhotoSessionActivity extends AppCompatActivity {
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                 bindPreview(cameraProvider);
             } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+                AppController.getInstance().log(e.getMessage());
             }
         }, ContextCompat.getMainExecutor(this));
     }
@@ -62,6 +73,52 @@ public class PhotoSessionActivity extends AppCompatActivity {
     }
 
     private void captureImage() {
-        Toast.makeText(this, "Pic taken", Toast.LENGTH_SHORT).show();
+        if (imageCapture == null) return;
+
+        imageCapture.takePicture(ContextCompat.getMainExecutor(this), new ImageCapture.OnImageCapturedCallback() {
+            @Override
+            public void onCaptureSuccess(@NonNull ImageProxy image) {
+                handleImageCaptured(image);
+            }
+
+            @Override
+            public void onError(@NonNull ImageCaptureException exception) {
+                AppController.getInstance().log(exception.getMessage());
+            }
+        });
     }
+
+    private void handleImageCaptured(ImageProxy image) {
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        byte[] data = new byte[buffer.remaining()];
+        buffer.get(data);
+
+        boolean uploadSuccessful = AppController.getInstance().getCurrentPhotoSession().addPhotoToSession(data);
+        if (uploadSuccessful) {
+            Toast.makeText(this, "Upload Successful", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Upload Failed. Please try again", Toast.LENGTH_SHORT).show();
+        }
+        captureButton.setEnabled(true);
+    }
+
+    private void finishSession() {
+        if (AppController.getInstance().getCurrentPhotoSession().numberOfPhotos() < 1) {
+            Toast.makeText(this, "Session canceled", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, InitiateSessionActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        boolean successfulSession = AppController.getInstance().endSession();
+        if (successfulSession) {
+            Toast.makeText(this, "Great Success!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, InitiateSessionActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this,"Something went wrong", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
