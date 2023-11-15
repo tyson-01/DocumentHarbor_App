@@ -2,10 +2,13 @@ package com.example.documentharbor.servercommunication;
 
 import android.util.Log;
 
+import com.example.documentharbor.enums.ProcessingMethod;
 import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.imaging.PhotoSession;
 import com.google.gson.Gson;
+
+import java.io.File;
 
 public class ServerCommunication {
     private Gson gson;
@@ -36,9 +39,17 @@ public class ServerCommunication {
         }
     }
 
-    public boolean uploadFile(PhotoSession session, FolderStructure folderStructure) {
-        // Implementation to upload files to the server
-        return true; // Placeholder, actual implementation needed
+    public boolean uploadFile(String photoName, File photo) {
+        //TODO: replace with api stuff
+        // convert to json
+        // make api call
+        // if 200, then return true. Else return false
+        return true;
+    }
+
+    public boolean sendEndSignal(String identifier, ProcessingMethod processingMethod) {
+        //TODO: send the signal to the server
+        return true;
     }
 
 }

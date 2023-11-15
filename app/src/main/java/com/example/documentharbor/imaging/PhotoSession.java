@@ -3,6 +3,7 @@ package com.example.documentharbor.imaging;
 import com.example.documentharbor.enums.ProcessingMethod;
 import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
+import com.example.documentharbor.servercommunication.ServerCommunication;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,15 +11,17 @@ import java.util.List;
 
 public class PhotoSession {
     private String sessionName;
+    private int nextPhotoIndex;
     private String folderPath;
     private ProcessingMethod processingMethod;
-    private List<File> capturedPhotos;
+    private ServerCommunication serverCommunication;
 
-    public PhotoSession(String sessionName, String folderPath) {
+    public PhotoSession(String sessionName, String folderPath, ServerCommunication serverCommunication) {
         this.sessionName = sessionName;
+        this.nextPhotoIndex = 1;
         this.folderPath = folderPath;
         this.processingMethod = ProcessingMethod.LEAVE_AS_IMAGES; // Default method
-        this.capturedPhotos = new ArrayList<>();
+        this.serverCommunication = serverCommunication;
     }
 
     public String getSessionName() {
@@ -37,16 +40,20 @@ public class PhotoSession {
         return this.processingMethod;
     }
 
-    public void capturePhoto(File photo) {
-        capturedPhotos.add(photo);
+    public boolean addPhotoToSession(File photo) {
+        String photoName = folderPath + "/" + sessionName + Integer.toString(nextPhotoIndex) + ".jpg";
+        boolean uploadSuccessful = serverCommunication.uploadFile(photoName, photo);
+
+        if (uploadSuccessful) {
+            nextPhotoIndex++;
+            return true;
+        }
+        return false;
     }
 
-    public List<File> getCapturedPhotos() {
-        return new ArrayList<>(capturedPhotos);
-    }
-
-    public void endSession() {
-        // End the session (no actual processing here)
+    public boolean endSession() {
+        String identifier = folderPath + "/" + sessionName;
+        return serverCommunication.sendEndSignal(identifier, processingMethod);
     }
 
 }
