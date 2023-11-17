@@ -56,7 +56,7 @@ public class PhotoSessionActivity extends AppCompatActivity {
                 ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                 bindPreview(cameraProvider);
             } catch (ExecutionException | InterruptedException e) {
-                AppController.getInstance().log(e.getMessage());
+                AppController.getInstance().getLogger().log("PhotoSessionActivity:startCamera", "Exception Triggered: " + e.getMessage(), e);
             }
         }, ContextCompat.getMainExecutor(this));
     }
@@ -82,8 +82,8 @@ public class PhotoSessionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError(@NonNull ImageCaptureException exception) {
-                AppController.getInstance().log(exception.getMessage());
+            public void onError(@NonNull ImageCaptureException e) {
+                AppController.getInstance().getLogger().log("PhotoSessionActivity:captureImage", "Exception Triggered: " + e.getMessage(), e);
             }
         });
     }
@@ -95,8 +95,10 @@ public class PhotoSessionActivity extends AppCompatActivity {
 
         boolean uploadSuccessful = AppController.getInstance().getCurrentPhotoSession().addPhotoToSession(data);
         if (uploadSuccessful) {
+            AppController.getInstance().getLogger().log("PhotoSessionActivity", "Image uploaded Successfully");
             Toast.makeText(this, "Upload Successful", Toast.LENGTH_SHORT).show();
         } else {
+            AppController.getInstance().getLogger().log("PhotoSessionActivity", "Image upload Failed");
             Toast.makeText(this, "Upload Failed. Please try again", Toast.LENGTH_SHORT).show();
         }
         captureButton.setEnabled(true);

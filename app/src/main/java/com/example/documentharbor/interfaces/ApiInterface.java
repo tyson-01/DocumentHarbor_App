@@ -16,4 +16,7 @@ public interface ApiInterface {
             @Part("fileName")RequestBody fileName,
             @Part MultipartBody .Part file
     );
+    //TODO: This interface is as of yet unused, it is for when I choose to implement the upload image api call
+    // we can probably just put it in the ApiService class I made for the GET api call and rename the
+    // references to it in the as of yet unimplemented upload image api function in servercommunication
 }

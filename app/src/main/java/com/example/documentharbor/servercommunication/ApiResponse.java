@@ -16,4 +16,6 @@ public class ApiResponse {
     public Object getData() {
         return data;
     }
+
+    //TODO: with ApiInterface, not yet used, for the upload image
 }

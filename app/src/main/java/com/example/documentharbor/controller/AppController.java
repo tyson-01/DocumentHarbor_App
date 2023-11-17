@@ -16,7 +16,6 @@ public class AppController {
     private final Logger logger;
 
     private AppController() {
-        // Initialize components
         logger = new Logger();
         serverCommunication = new ServerCommunication();
         folderStructure = null;
@@ -30,8 +29,8 @@ public class AppController {
         return instance;
     }
 
-    public void log(String logData) {
-        logger.log(logData);
+    public Logger getLogger() {
+        return this.logger;
     }
 
     public void updateFolderStructure() {

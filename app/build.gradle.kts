@@ -66,7 +66,7 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
 
     // Google's gson library for parsing incoming json from server
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.8.9") //possibly no longer needed
 
     // Retrofit stuff for sending image files to server
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
