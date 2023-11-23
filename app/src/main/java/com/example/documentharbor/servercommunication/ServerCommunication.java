@@ -1,13 +1,17 @@
 package com.example.documentharbor.servercommunication;
 
-import android.util.Log;
-
 import com.example.documentharbor.controller.AppController;
 import com.example.documentharbor.enums.ProcessingMethod;
 import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.interfaces.ApiService;
+import com.example.documentharbor.interfaces.ImageUploadCallback;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -21,18 +25,18 @@ public class ServerCommunication {
 
     public FolderStructure getFolderStructure() {
         try {
-            AppController.getInstance().getLogger().log("ServerCommunication", "Attempting to GET /getFolderStructure");
+            AppController.getInstance().getLogger().log("ServerCommunication:getFolderStructure", "Attempting to GET /getFolderStructure");
             Response<Folder> response = apiService.getFolderStructure().execute();
 
             if(response.isSuccessful()) {
-                AppController.getInstance().getLogger().log("ServerCommunication", "Response successful");
+                AppController.getInstance().getLogger().log("ServerCommunication:getFolderStructure", "Response successful");
                 Folder rootFolder = response.body();
                 explore(rootFolder);
                 return new FolderStructure(rootFolder);
             }
-            AppController.getInstance().getLogger().log("ServerCommunication", "Response failed");
+            AppController.getInstance().getLogger().log("ServerCommunication:getFolderStructure", "Response failed");
         } catch (Exception e) {
-            AppController.getInstance().getLogger().log("ServerCommunication", "Exception triggered: " + e.getMessage(), e);
+            AppController.getInstance().getLogger().log("ServerCommunication:getFolderStructure", "Exception triggered: " + e.getMessage(), e);
         }
         return null;
     }
@@ -46,30 +50,37 @@ public class ServerCommunication {
         }
     }
 
-    public boolean uploadFile(String photoName, byte[] photoData) {
-        //TODO: uncomment out the logic once api is set up
-        try{Thread.sleep(3000);} catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return true;
+    public void uploadFile(String photoName, byte[] photoData, ImageUploadCallback callback) {
+        AppController.getInstance().getLogger().log(photoName);
+        AppController.getInstance().getLogger().log("ServerCommunication:uploadFile", "Attempting to POST /uploadImage");
 
-        /*
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), photoData);
-        RequestBody fileNameBody = RequestBody.create(MediaType.parse("text/plain"), photoName);
+        RequestBody nameRequestBody = RequestBody.create(MediaType.parse("text/plain"), photoName);
+        RequestBody fileRequestBody = RequestBody.create(MediaType.parse("image/*"), photoData);
 
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", photoName, requestBody);
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", "photo.jpg", fileRequestBody);
 
-        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-        Call<ApiResponse> call = apiInterface.uploadFile(fileNameBody, filePart);
+        Call<Void> call = apiService.uploadImage(nameRequestBody, filePart);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    AppController.getInstance().getLogger().log("ServerCommunication:uploadFile", "Upload Successful");
+                    callback.onImageUploaded(true);
+                } else {
+                    AppController.getInstance().getLogger().log("ServerCommunication:uploadFile", "Upload Unsuccessful");
+                    callback.onImageUploaded(false);
+                }
+            }
 
-        try {
-            Response<ApiResponse> response = call.execute();
-            return response.isSuccessful();
-        } catch (IOException e) {
-            return false;
-        }
-         */
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                AppController.getInstance().getLogger().log("ServerCommunication:uploadFile", "Upload Failed");
+                callback.onImageUploaded(false);
+            }
+        });
     }
+
+
 
     public boolean sendEndSignal(String identifier, ProcessingMethod processingMethod) {
         //TODO: send the signal to the server

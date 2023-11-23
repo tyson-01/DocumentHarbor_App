@@ -1,6 +1,7 @@
 package com.example.documentharbor.imaging;
 
 import com.example.documentharbor.enums.ProcessingMethod;
+import com.example.documentharbor.interfaces.ImageUploadCallback;
 import com.example.documentharbor.servercommunication.ServerCommunication;
 
 public class PhotoSession {
@@ -37,15 +38,13 @@ public class PhotoSession {
         return this.processingMethod;
     }
 
-    public boolean addPhotoToSession(byte[] photoData) {
+    public void addPhotoToSession(byte[] photoData, ImageUploadCallback callback) {
         String photoName = folderPath + "/" + sessionName + Integer.toString(nextPhotoIndex) + ".jpg";
-        boolean uploadSuccessful = serverCommunication.uploadFile(photoName, photoData);
+        serverCommunication.uploadFile(photoName, photoData, callback);
+    }
 
-        if (uploadSuccessful) {
-            nextPhotoIndex++;
-            return true;
-        }
-        return false;
+    public void incrementPhotoIndex() {
+        nextPhotoIndex++;
     }
 
     public boolean endSession() {

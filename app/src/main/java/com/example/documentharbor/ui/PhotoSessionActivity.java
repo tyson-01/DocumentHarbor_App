@@ -18,12 +18,13 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.example.documentharbor.R;
 import com.example.documentharbor.controller.AppController;
+import com.example.documentharbor.interfaces.ImageUploadCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 
-public class PhotoSessionActivity extends AppCompatActivity {
+public class PhotoSessionActivity extends AppCompatActivity implements ImageUploadCallback {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private PreviewView previewView;
     private ImageCapture imageCapture;
@@ -94,14 +95,21 @@ public class PhotoSessionActivity extends AppCompatActivity {
         byte[] data = new byte[buffer.remaining()];
         buffer.get(data);
 
-        boolean uploadSuccessful = AppController.getInstance().getCurrentPhotoSession().addPhotoToSession(data);
-        if (uploadSuccessful) {
+        AppController.getInstance().getCurrentPhotoSession().addPhotoToSession(data, this);
+    }
+
+    @Override
+    public void onImageUploaded(boolean isSuccessful) {
+        if (isSuccessful) {
+            AppController.getInstance().getCurrentPhotoSession().incrementPhotoIndex();
+
             AppController.getInstance().getLogger().log("PhotoSessionActivity", "Image uploaded Successfully");
             Toast.makeText(this, "Upload Successful", Toast.LENGTH_SHORT).show();
         } else {
             AppController.getInstance().getLogger().log("PhotoSessionActivity", "Image upload Failed");
             Toast.makeText(this, "Upload Failed. Please try again", Toast.LENGTH_SHORT).show();
         }
+
         captureButton.setEnabled(true);
         doneButton.setEnabled(true);
     }
@@ -120,5 +128,4 @@ public class PhotoSessionActivity extends AppCompatActivity {
             Toast.makeText(this,"Something went wrong", Toast.LENGTH_SHORT).show();
         }
     }
-
 }
