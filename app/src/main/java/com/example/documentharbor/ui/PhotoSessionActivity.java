@@ -95,6 +95,8 @@ public class PhotoSessionActivity extends AppCompatActivity implements ImageUplo
         byte[] data = new byte[buffer.remaining()];
         buffer.get(data);
 
+        image.close();
+
         AppController.getInstance().getCurrentPhotoSession().addPhotoToSession(data, this);
     }
 
