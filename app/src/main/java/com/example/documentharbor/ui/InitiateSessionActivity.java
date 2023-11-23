@@ -4,16 +4,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.documentharbor.R;
 import com.example.documentharbor.controller.AppController;
@@ -81,8 +78,9 @@ public class InitiateSessionActivity extends AppCompatActivity {
     private void setupUI() {
         EditText etSessionName;
         etSessionName = findViewById(R.id.etSessionName);
-        Button btnStartSession = findViewById(R.id.btnStartSession);
+        etSessionName.setText("");
 
+        Button btnStartSession = findViewById(R.id.btnStartSession);
         btnStartSession.setOnClickListener(v -> startNewSession(etSessionName.getText().toString().trim()));
     }
 

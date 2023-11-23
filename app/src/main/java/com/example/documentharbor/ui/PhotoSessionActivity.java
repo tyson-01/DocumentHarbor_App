@@ -1,6 +1,5 @@
 package com.example.documentharbor.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
@@ -29,6 +28,7 @@ public class PhotoSessionActivity extends AppCompatActivity {
     private PreviewView previewView;
     private ImageCapture imageCapture;
     private Button captureButton;
+    private Button doneButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +41,13 @@ public class PhotoSessionActivity extends AppCompatActivity {
         startCamera();
 
         captureButton = findViewById(R.id.btnCapture);
+        doneButton = findViewById(R.id.btnDone);
+
         captureButton.setOnClickListener(view -> {
             captureButton.setEnabled(false);
+            doneButton.setEnabled(false);
             captureImage();
         });
-
-        Button doneButton = findViewById(R.id.btnDone);
         doneButton.setOnClickListener(view -> finishSession());
     }
 
@@ -102,21 +103,18 @@ public class PhotoSessionActivity extends AppCompatActivity {
             Toast.makeText(this, "Upload Failed. Please try again", Toast.LENGTH_SHORT).show();
         }
         captureButton.setEnabled(true);
+        doneButton.setEnabled(true);
     }
 
     private void finishSession() {
         if (AppController.getInstance().getCurrentPhotoSession().numberOfPhotos() < 1) {
             Toast.makeText(this, "Session canceled", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, InitiateSessionActivity.class);
-            startActivity(intent);
             finish();
         }
 
         boolean successfulSession = AppController.getInstance().endSession();
         if (successfulSession) {
             Toast.makeText(this, "Great Success!", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, InitiateSessionActivity.class);
-            startActivity(intent);
             finish();
         } else {
             Toast.makeText(this,"Something went wrong", Toast.LENGTH_SHORT).show();
