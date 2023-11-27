@@ -18,13 +18,14 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.example.documentharbor.R;
 import com.example.documentharbor.controller.AppController;
+import com.example.documentharbor.interfaces.EndSignalCallback;
 import com.example.documentharbor.interfaces.ImageUploadCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutionException;
 
-public class PhotoSessionActivity extends AppCompatActivity implements ImageUploadCallback {
+public class PhotoSessionActivity extends AppCompatActivity implements ImageUploadCallback, EndSignalCallback {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private PreviewView previewView;
     private ImageCapture imageCapture;
@@ -122,8 +123,12 @@ public class PhotoSessionActivity extends AppCompatActivity implements ImageUplo
             finish();
         }
 
-        boolean successfulSession = AppController.getInstance().endSession();
-        if (successfulSession) {
+        AppController.getInstance().endSession(this);
+    }
+
+    @Override
+    public void onEndSignalSent(boolean isSuccessful) {
+        if (isSuccessful) {
             Toast.makeText(this, "Great Success!", Toast.LENGTH_SHORT).show();
             finish();
         } else {

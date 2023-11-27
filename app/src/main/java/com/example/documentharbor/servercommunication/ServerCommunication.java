@@ -5,7 +5,11 @@ import com.example.documentharbor.enums.ProcessingMethod;
 import com.example.documentharbor.filestructure.Folder;
 import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.interfaces.ApiService;
+import com.example.documentharbor.interfaces.EndSignalCallback;
 import com.example.documentharbor.interfaces.ImageUploadCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -82,9 +86,37 @@ public class ServerCommunication {
 
 
 
-    public boolean sendEndSignal(String identifier, ProcessingMethod processingMethod) {
-        //TODO: send the signal to the server
-        return true;
+    public void sendEndSignal(String identifier, ProcessingMethod processingMethod, EndSignalCallback callback) {
+        AppController.getInstance().getLogger().log("ServerCommunication:sendEndSignal", "Attempting to POST /sendEndSignal");
+
+        JSONObject jsonData = new JSONObject();
+        try {
+            jsonData.put("identifier", identifier);
+            jsonData.put("processingMethod", processingMethod.toString());
+        } catch (JSONException e) {
+            AppController.getInstance().getLogger().log("ServerCommunication:sendEndSignal", "Exception triggered: " + e.getMessage(), e);
+        }
+        AppController.getInstance().getLogger().log("ServerCommunication:sendEndSignal", "Request Data: " + jsonData.toString());
+        RequestBody requestBody  = RequestBody.create(MediaType.parse("application/json"), jsonData.toString());
+
+        Call<Void> call = apiService.sendEndSignal(requestBody);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    AppController.getInstance().getLogger().log("ServerCommunication:sendEndSignal", "End Signal sent Successfully");
+                    callback.onEndSignalSent(true);
+                } else {
+                    AppController.getInstance().getLogger().log("ServerCommunication:sendEndSignal", "End Signal Unsuccessful");
+                    callback.onEndSignalSent(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                AppController.getInstance().getLogger().log("ServerCommunication:sendEndSignal", "End Signal Failed");
+            }
+        });
     }
 
 }

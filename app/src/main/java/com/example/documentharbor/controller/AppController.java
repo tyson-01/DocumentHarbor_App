@@ -3,6 +3,7 @@ package com.example.documentharbor.controller;
 import com.example.documentharbor.enums.ProcessingMethod;
 import com.example.documentharbor.filestructure.FolderStructure;
 import com.example.documentharbor.imaging.PhotoSession;
+import com.example.documentharbor.interfaces.EndSignalCallback;
 import com.example.documentharbor.logging.Logger;
 import com.example.documentharbor.servercommunication.ServerCommunication;
 
@@ -55,11 +56,8 @@ public class AppController {
         }
     }
 
-    public boolean endSession() {
-        if (currentPhotoSession != null) {
-            return currentPhotoSession.endSession();
-        }
-        return false;
+    public void endSession(EndSignalCallback callback) {
+        currentPhotoSession.endSession(callback);
     }
 }
 

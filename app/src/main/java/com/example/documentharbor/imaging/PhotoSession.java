@@ -1,6 +1,7 @@
 package com.example.documentharbor.imaging;
 
 import com.example.documentharbor.enums.ProcessingMethod;
+import com.example.documentharbor.interfaces.EndSignalCallback;
 import com.example.documentharbor.interfaces.ImageUploadCallback;
 import com.example.documentharbor.servercommunication.ServerCommunication;
 
@@ -47,9 +48,9 @@ public class PhotoSession {
         nextPhotoIndex++;
     }
 
-    public boolean endSession() {
+    public void endSession(EndSignalCallback callback) {
         String identifier = folderPath + "/" + sessionName;
-        return serverCommunication.sendEndSignal(identifier, processingMethod);
+        serverCommunication.sendEndSignal(identifier, processingMethod, callback);
     }
 
 }

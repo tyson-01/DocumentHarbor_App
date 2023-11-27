@@ -5,6 +5,7 @@ import com.example.documentharbor.filestructure.Folder;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -20,4 +21,9 @@ public interface ApiService {
             @Part("photoName") RequestBody photoName,
             @Part MultipartBody.Part file
             );
+
+    @POST("/sendEndSignal")
+    Call<Void> sendEndSignal(
+            @Body RequestBody requestBody
+    );
 }
